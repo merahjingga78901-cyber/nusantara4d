@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUSANTARA4D - Platform Gaming & Hiburan Khas Indonesia</title>
+    <!-- Menggunakan Tailwind CSS untuk styling cepat dan modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Background Utama Seluruh Halaman: Tema Candi & Wayang Khas Indonesia */
+        .bg-nusantara-global {
+            background: linear-gradient(180deg, rgba(15, 2, 2, 0.75) 0%, rgba(35, 5, 5, 0.8) 50%, rgba(15, 2, 2, 0.85) 100%),
+                        url('https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1920&q=80') center center / cover fixed no-repeat;
+        }
+
+        /* Banner Hero Landing Page & Lobi Utama dengan Background Candi & Wayang */
+        .bg-card-candi-wayang {
+            background: linear-gradient(135deg, rgba(180, 20, 20, 0.65) 0%, rgba(20, 5, 5, 0.75) 60%, rgba(10, 0, 0, 0.85) 100%),
+                        url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80') center center / cover no-repeat;
+        }
+
+        /* Modal Dialog dengan Latar Belakang Candi & Wayang */
+        .bg-modal-nusantara {
+            background: linear-gradient(180deg, rgba(25, 5, 5, 0.95) 0%, rgba(10, 2, 2, 0.98) 100%),
+                        url('https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=800&q=80') center / cover no-repeat;
+        }
+    </style>
+</head>
+<body class="bg-nusantara-global text-white font-sans min-h-screen flex flex-col justify-between selection:bg-red-600 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="bg-neutral-950/80 backdrop-blur-md border-b border-red-800/60 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo NUSANTARA4D dengan Mahkota Mahakarya -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
+                <div class="bg-gradient-to-br from-red-600 to-red-800 text-white font-black text-xl px-2.5 py-1 rounded-lg tracking-wider shadow-lg shadow-red-600/40 border border-red-500/30 flex items-center gap-1.5">
+                    <i class="fa-solid fa-crown text-amber-400 text-sm"></i> N4D
+                </div>
+                <span class="text-lg sm:text-xl font-extrabold tracking-wide text-white">NUSANTARA<span class="text-red-500">4D</span></span>
+            </div>
+
+            <!-- Navigation Links (Desktop) -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#" onclick="switchView('home')" class="text-red-500 hover:text-red-400 transition flex items-center gap-1.5"><i class="fa-solid fa-house text-xs"></i> Beranda</a>
+                <a href="#" onclick="checkAuthAndSwitch('lobby')" class="text-neutral-300 hover:text-red-400 transition flex items-center gap-1.5"><i class="fa-solid fa-gamepad text-xs"></i> Lobi Utama</a>
+                <a href="#" onclick="switchView('promotions')" class="text-neutral-300 hover:text-red-400 transition flex items-center gap-1.5"><i class="fa-solid fa-gift text-xs"></i> Promosi & Bonus</a>
+                <a href="#" onclick="switchView('help')" class="text-neutral-300 hover:text-red-400 transition flex items-center gap-1.5"><i class="fa-solid fa-circle-question text-xs"></i> Pusat Bantuan</a>
+                <!-- Tombol Rahasia Panel Pemilik/Admin -->
+                <a href="#" id="adminNavBtn" onclick="openAdminModal()" class="hidden text-amber-400 font-bold hover:text-amber-300 transition flex items-center gap-1.5 bg-red-950/80 px-3 py-1 rounded-lg border border-amber-500/50 shadow"><i class="fa-solid fa-user-shield text-xs"></i> Panel Pemilik</a>
+            </nav>
+
+            <!-- User Profile Header / Auth Buttons -->
+            <div id="userProfileHeader" class="flex items-center space-x-3">
+                <div id="loggedInUserHeader" class="hidden flex items-center space-x-3">
+                    <div class="relative cursor-pointer group" onclick="openAvatarModal()">
+                        <img id="headerAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Pemain" alt="Foto Profil" class="w-10 h-10 rounded-full border-2 border-red-600 bg-neutral-900 p-0.5 shadow-md shadow-red-600/20">
+                        <span class="absolute bottom-0 right-0 bg-red-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-pen"></i>
+                        </span>
+                    </div>
+
+                    <div class="text-left hidden sm:block">
+                        <p class="text-sm font-bold text-white leading-tight" id="headerUsername">Pemain</p>
+                        <div class="flex items-center gap-1 text-xs text-amber-400 font-semibold mt-0.5">
+                            <i class="fa-solid fa-coins text-amber-400"></i>
+                            <span id="headerCoins">1.000 Koin</span>
+                        </div>
+                    </div>
+
+                    <button onclick="logout()" class="bg-red-950/50 hover:bg-red-900/80 text-red-400 border border-red-800/60 px-3 py-2 rounded-lg text-xs font-semibold transition ml-2" title="Keluar">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+
+                <div id="loggedOutUserHeader" class="flex items-center space-x-2">
+                    <button onclick="switchView('home'); focusLogin();" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition border border-red-500/40 shadow">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> Masuk
+                    </button>
+                    <button onclick="openRegisterModal()" class="bg-black/80 hover:bg-neutral-900 text-amber-400 font-bold px-4 py-2 rounded-xl text-xs border border-amber-500/50 transition">
+                        <i class="fa-solid fa-user-plus mr-1"></i> Daftar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LIVE NOTIFICATION TICKER / RUNNING TEXT -->
+    <div class="bg-neutral-900/95 border-b border-red-800/60 py-2.5 px-4 shadow-xl overflow-hidden">
+        <div class="max-w-7xl mx-auto flex items-center space-x-3">
+            <div class="bg-gradient-to-r from-red-600 to-red-700 text-white text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1 shrink-0 shadow border border-red-500/40">
+                <i class="fa-solid fa-bullhorn text-amber-300"></i> Info Live
+            </div>
+            <div class="overflow-hidden whitespace-nowrap w-full">
+                <p id="liveNotificationTicker" class="text-xs text-amber-300 font-bold transition-all duration-500">
+                    Memuat informasi transaksi terbaru...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-grow">
+        <!-- VIEW 1: HOME LANDING PAGE -->
+        <div id="homeView">
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="relative rounded-3xl overflow-hidden bg-card-candi-wayang p-6 sm:p-12 border-2 border-red-600/70 shadow-2xl shadow-red-950/80">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                        
+                        <!-- Left Banner Content -->
+                        <div class="lg:col-span-7 space-y-4">
+                            <span class="bg-red-600/40 text-amber-300 text-xs font-bold px-3.5 py-1.5 rounded-full border border-amber-400/40 uppercase tracking-widest inline-flex items-center gap-2 shadow-lg backdrop-blur-sm">
+                                <i class="fa-solid fa-monument text-amber-400"></i> Warisan Megah Nusantara
+                            </span>
+                            <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight drop-shadow-md">
+                                Selamat Datang di <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-300 to-red-400">NUSANTARA4D</span>
+                            </h1>
+                            <p class="text-neutral-200 text-sm sm:text-base leading-relaxed drop-shadow-sm font-medium">
+                                Nikmati keseruan hiburan portal game bernuansa kemegahan Candi & Wayang Indonesia. Wajib mendaftar akun terlebih dahulu sebelum dapat masuk.
+                            </p>
+                        </div>
+
+                        <!-- Right Form Login Box -->
+                        <div class="lg:col-span-5">
+                            <div class="bg-neutral-950/90 border-2 border-red-600/80 rounded-2xl p-6 shadow-2xl backdrop-blur-md">
+                                <h2 class="text-lg font-bold text-amber-400 mb-1 flex items-center gap-2">
+                                    <i class="fa-solid fa-right-to-bracket text-red-500"></i> Masuk Ke Akun
+                                </h2>
+                                <p class="text-xs text-neutral-400 mb-4">Silakan masuk jika Anda sudah terdaftar di sistem.</p>
+
+                                <form onsubmit="handleLogin(event)" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-neutral-300 mb-1">User ID / Username</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-500"><i class="fa-solid fa-user text-xs"></i></span>
+                                            <input type="text" id="loginUsername" placeholder="Masukkan User ID Terdaftar" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-neutral-300 mb-1">Kata Sandi / Password</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-500"><i class="fa-solid fa-lock text-xs"></i></span>
+                                            <input type="password" id="loginPassword" placeholder="Masukkan Kata Sandi" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-red-600/30 uppercase tracking-wider flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-gamepad"></i> Masuk / Login
+                                    </button>
+                                </form>
+
+                                <div class="mt-4 pt-4 border-t border-neutral-800 text-center">
+                                    <p class="text-xs text-neutral-400">Belum mendaftar akun?</p>
+                                    <button onclick="openRegisterModal()" class="mt-2 text-xs font-extrabold text-amber-400 hover:text-amber-300 underline flex items-center justify-center gap-1 mx-auto">
+                                        <i class="fa-solid fa-user-plus"></i> Klik Di Sini Untuk Daftar Akun Baru
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW 2: LOBI UTAMA -->
+        <div id="lobbyView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div class="bg-card-candi-wayang border-2 border-red-600/70 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl shadow-red-950/80">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                    <div class="flex items-center space-x-5">
+                        <div class="relative cursor-pointer group" onclick="openAvatarModal()">
+                            <img id="lobbyAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Pemain" alt="Foto Profil" class="w-20 h-20 rounded-full border-4 border-red-600 bg-black p-1 shadow-xl shadow-red-600/40">
+                            <div class="absolute inset-0 bg-black/70 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 text-xs font-bold transition">
+                                Ganti
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-amber-300 text-xs font-semibold uppercase tracking-wider bg-red-950/80 px-3 py-1 rounded-full border border-red-600/50 inline-flex items-center gap-1.5 shadow-inner">
+                                <i class="fa-solid fa-certificate text-amber-400"></i> Member Resmi Terdaftar
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1" id="displayName">Pemain</h2>
+                            
+                            <div class="mt-2 inline-flex items-center gap-2 bg-black/90 border border-red-600/60 px-3.5 py-1.5 rounded-xl shadow-inner">
+                                <i class="fa-solid fa-coins text-amber-400 text-base"></i>
+                                <span class="text-xs text-neutral-300">Sisa Koin:</span>
+                                <span class="text-sm font-extrabold text-amber-400" id="displayCoins">1.000</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <button onclick="openModal('deposit')" class="flex-1 md:flex-none bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg border border-red-500/30">
+                            <i class="fa-solid fa-wallet"></i> Top Up (Deposit)
+                        </button>
+                        <button onclick="openModal('withdraw')" class="flex-1 md:flex-none bg-black/80 hover:bg-neutral-900 text-white font-semibold px-5 py-2.5 rounded-xl text-xs border border-neutral-600 transition flex items-center justify-center gap-2 backdrop-blur-sm">
+                            <i class="fa-solid fa-money-bill-transfer text-amber-400"></i> Withdraw
+                        </button>
+                        <button onclick="openCSModal()" class="flex-1 md:flex-none bg-black/80 hover:bg-neutral-900 text-neutral-300 font-semibold px-4 py-2.5 rounded-xl text-xs border border-neutral-600 transition flex items-center justify-center gap-2 backdrop-blur-sm">
+                            <i class="fa-solid fa-headset text-red-500"></i> CS Resmi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori Permainan Utama -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-red-500"></i> Pilih Arena Permainan NUSANTARA4D
+                    </h3>
+                    <span class="text-xs text-neutral-300">4 Arena Aktif</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div onclick="openSlotLobby()" class="bg-black/75 backdrop-blur-md border-2 border-red-600 hover:border-amber-400 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 group relative overflow-hidden shadow-2xl">
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow">HOT</span>
+                        <div class="w-14 h-14 bg-red-600/30 rounded-xl flex items-center justify-center text-red-400 text-2xl mb-4 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white transition border border-red-600/40">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-lg">Slot Games</h4>
+                        <p class="text-xs text-neutral-300 mt-2 leading-relaxed">Pilih koleksi game slot pilihan Anda di Nusantara4D.</p>
+                        <div class="mt-6 flex items-center justify-between text-xs text-amber-400 font-bold group-hover:translate-x-1 transition">
+                            <span>Buka Daftar Game</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="playGame('Live Casino')" class="bg-black/75 backdrop-blur-md border border-neutral-800 hover:border-red-600 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 group relative overflow-hidden shadow-xl">
+                        <div class="w-14 h-14 bg-red-600/20 rounded-xl flex items-center justify-center text-red-500 text-2xl mb-4 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white transition border border-red-600/30">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-lg">Live Casino</h4>
+                        <p class="text-xs text-neutral-300 mt-2 leading-relaxed">Pengalaman bermain langsung dengan tampilan live dealer yang jernih dan real-time.</p>
+                        <div class="mt-6 flex items-center justify-between text-xs text-amber-400 font-semibold group-hover:translate-x-1 transition">
+                            <span>Mainkan Sekarang</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="playGame('Sportsbook')" class="bg-black/75 backdrop-blur-md border border-neutral-800 hover:border-red-600 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 group relative overflow-hidden shadow-xl">
+                        <div class="w-14 h-14 bg-red-600/20 rounded-xl flex items-center justify-center text-red-500 text-2xl mb-4 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white transition border border-red-600/30">
+                            <i class="fa-solid fa-futbol"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-lg">Sportsbook</h4>
+                        <p class="text-xs text-neutral-300 mt-1 leading-relaxed">Bursa pasar olahraga terlengkap dari seluruh kompetisi sepak bola dan cabang dunia.</p>
+                        <div class="mt-6 flex items-center justify-between text-xs text-amber-400 font-semibold group-hover:translate-x-1 transition">
+                            <span>Mainkan Sekarang</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="playGame('Arcade Games')" class="bg-black/75 backdrop-blur-md border border-neutral-800 hover:border-red-600 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 group relative overflow-hidden shadow-xl">
+                        <div class="w-14 h-14 bg-red-600/20 rounded-xl flex items-center justify-center text-red-500 text-2xl mb-4 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white transition border border-red-600/30">
+                            <i class="fa-solid fa-puzzle-piece"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-lg">Arcade Games</h4>
+                        <p class="text-xs text-neutral-300 mt-2 leading-relaxed">Koleksi mini game santai dan interaktif dengan gameplay cepat dan menyenangkan.</p>
+                        <div class="mt-6 flex items-center justify-between text-xs text-amber-400 font-semibold group-hover:translate-x-1 transition">
+                            <span>Mainkan Sekarang</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIWAYAT TRANSAKSI -->
+            <div class="bg-black/75 backdrop-blur-md border border-neutral-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-red-500"></i> Bukti & Riwayat Transaksi Pemain
+                    </h3>
+                    <span class="text-xs text-neutral-400">Catatan Otomatis</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-neutral-900/90 text-neutral-400 text-xs uppercase border-b border-neutral-800">
+                            <tr>
+                                <th class="p-3">Waktu & Tanggal</th>
+                                <th class="p-3">Jenis Aktivitas</th>
+                                <th class="p-3">Keterangan / Detail</th>
+                                <th class="p-3">Jumlah Koin</th>
+                                <th class="p-3">Status ACC Pemilik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionHistoryTable" class="divide-y divide-neutral-800 text-neutral-300">
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-neutral-500 text-xs">Belum ada transaksi atau aktivitas permainan yang tercatat.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: LOBI SLOT (Total 40 Slot Game) -->
+        <div id="slotLobbyView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between bg-black/85 border border-red-800/60 p-4 rounded-2xl gap-4">
+                <button onclick="switchView('lobby')" class="bg-neutral-900 hover:bg-neutral-800 text-white font-bold px-4 py-2 rounded-xl text-xs border border-neutral-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Lobi Utama
+                </button>
+                <div class="text-center">
+                    <h2 class="text-lg font-black text-amber-400 uppercase tracking-wider">PG Soft - Slot Games Nusantara (40 Slot)</h2>
+                    <p class="text-xs text-neutral-300">Pilih game favorit Anda di bawah ini</p>
+                </div>
+                <div class="w-full sm:w-64">
+                    <input type="text" placeholder="Cari game slot..." class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-600">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                
+                <!-- 1. Game Nusantara 1702123 -->
+                <div onclick="launchGame('Game Nusantara 1702123', 'https://m.9ffyu1g9c.com/1702123/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=17rgz%3D6tkljcnhq%3Dtfd&or=01tubujd%3Dw2lzv1lks%3Ddpn&__hv=2fMEUCIA2lKckUPngoN%2Fq%2Bv%2BAlFzDzdW69Ga%2FPAiuBrbCYr1%2FVAiEAxBYIbOouL%2BbsdNXJ7lAMPXAa%2FMULM7bVh%2BLDIIpqw%2Bc%3D')" class="bg-neutral-900/90 border-2 border-amber-500/80 hover:border-amber-400 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">BARU</span>
+                        <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=400&q=80" alt="Game Nusantara 1702123" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2.5">
+                            <span class="text-[10px] bg-amber-500 text-neutral-950 font-black px-1.5 py-0.5 rounded">PG Soft</span>
+                        </div>
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Game Nusantara 1702123</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 2. Slot PGS 65 -->
+                <div onclick="launchGame('Slot PGS 65', 'https://wl4.loobygamesonline.com/api/pgs/launch/pgs_65?data=88ef1758d7916bb93d7feddfd376b45fb4b39b91c59bd033088d7015357dc0563f635c65d3ba3ed34c0267beef35b8bab693f44ab75637d4234caa35509e4cff1eae103717ffff5fd4873fcb51b5bab96797f16bc549dfcba0c3e20c6f62f52f773509a97aedda0aa478ce7a69948a2135421abd187460df3a6e99afcebb468dab4b73807c8409376bf0aeacdfdca8da54c614d334be8242658330f5ec8bbbb4d87aef4c71fd7c1adfa4c249e6f4f51b7a1e17eeb5a557b0fb123122d2758abba06871f6af3813338fe6547ac7ab0606191a5ee97c90e0efa7c25b18d74750d15d09a49731847273cf15f83c2e17323fea51870833c1db04f3b6013db661874c6812dbf671eb8fc1c3dfcb7570ded3bc7bd5e41af2f0aff105d3b2faced7d63c0f2aa9daf7c9494aca4375ea462bb861496a5c9ada1fca8bee3fff28a1857255ed5c03f4734a988ee1dcbc2b0ace675a2c36d26af60cadf768377007333fc6ccfc2ca2a30d1fec9b1e38268cad25eb62c6cb0793a57d2d224e30c0ee7b881b0b81052525055bde71742a0c614269b29f061cfcade9d00cf3c67b6dc6cd483d414c5f1423e22c245f96bb63f36fc45e4968cdf3e6ef2575637141325fa7d78d3420f4cc97aa2e370c5e4bbf2b3b815aacb916d66bce34733ce79fd5d38400c811ca9352094be7b5e330688343c6a3ad664953148e20613e92601fee605aa496296d465a9a1d798c9952b4562d5d82563b0f8cfb8393044b32a3bd0621dda622c9a7c754bc0fd23230a24a8196cd90193028943eb71919bceade74a12748c50bad99c8f36f0faaf9e6dab519f5966b94ef5bde0edbb3ab33f4dc19868f542150483aa8fe436b875d92f37018d8d8116060589bcf994b165390e5104300d745fdfcbaf93a47797a6267312af2d5f84aedd32689f0362a6752210a80b03794bccd502de4cda222898f03f10100856cddfe05437a930f9458d1a3ac77c3cad173c1bc0dccf5098c8f7ee48d9b14f2235560bd6b3e5858ebae60c15038a2e3b73d88a391adb019f3d1550ac59bee5a2b1eea1047a87e747142e43556de0f776141efeee1ac479eb2f0bb298e607891db561814b930712a806369f5d01d8431dc8f7a0d39e8c9dcfc3cf3a5c687a4979888471fc5e6532d43d5c129c454c0a215ed039c7f4ccb1b2aacfffe08069e43ab570b33b726d4d0a2f381d501b0158ca323cb9e80a9bd8be3ae02e9f3104373be235e6b67999b17c1dd2a3b2a2a0cabde09010c2d703d94362d3ace57b36897de09cc4660ad193dae0ed66d1970d483ab0531040188974d1648ccea2066c4354ad523648320dd2f7bc78514572466f0bb964f312ff0ccf1639f86880d876ba6bc73b3fd76c506a6af3a9b90ebafcc8f165b902a694553f4a83f6bf6849b76da5c6ca7f8d00dd10aec34a35f7b9d75df6ca117b4e932b8cd9ac355740fa60ec1f09b534ad66a5d87dfa2253be9722053501a872be1b607a1d92dc91c6c4e6570fbad5183a3d2d546fe60a4bbd079fac45b2731f647c2f4eebb2151af8bcd5cd74cea6051c561c993b1cd6f781a534f56d45281fbb3bd56040bbb4584ca048a76af03707c35bf247127c6c0ba1c7d53bf1b9892edc0106acefb3c24dd9aaded02cb9a62fa87b15fe468712662080b5cbe94e68c1de2f223e67288ff86c6159f6d3aab161437d2415ceafee3fffc399c0a4d7179b652a68ec4ab35b53bdf668465cff88c9386d0729d481e66fdde7de42fe3157ef5992e0fb037ee7930672950ace70b4fd4dd900772375e5827d8e31c85878551ba0f9cf765efb659b59c619831c081039f14d4ef7215c54721342b390b0ec9ede625be818c4fab7a2be8bdab4521915215a67377fd46a48d9480e773b8b0ad521c7c351aec440bc506828e2480042b2931180dcaa36491b6bc3bec02cf40245575ef98ed4087499f8dbf34695a1c2a6a09142a85fc27ae803fd9510aded2e2130b1f2871a705eefb0ce3ecfb42d915511f0b85b39bb3e1c990d5f192a43ead01b8f74a11d1f02c2606efd7d1054dca9ccb9f140c938f7fcb934df6fcfae50ca6df58508cf53d4e3b9b56458fa1f7e1488f2b76897ae2ba2d8365e4017e18f459fc')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=400&q=80" alt="Slot PGS 65" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Slot PGS 65</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 3. Mahjong Ways Baru -->
+                <div onclick="launchGame('Mahjong Ways Baru', 'https://m.9ffyu1g9c.com/74/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=03dsl%3Dx45rzx68r%3Dfrp&or=14ghohwq%3Dj2ymi1yxf%3Dqca&__hv=2fMEUCIA2lKckUPngoN%2Fq%2Bv%2BAlFzDzdW69Ga%2FPAiuBrbCYr1%2FVAiEAxBYIbOouL%2BbsdNXJ7lAMPXAa%2FMULM7bVh%2BLDIIpqw%2Bc%3D')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">BARU</span>
+                        <img src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=400&q=80" alt="Mahjong Ways Baru" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Mahjong Ways Baru</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 4. Mahjong Wins 3 -->
+                <div onclick="launchGame('Mahjong Wins 3', 'https://m.9ffyu1g9c.com/135/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=16qfy%3D6sjkibmgp%3Dsec&or=03vwdwlf%3Dy2nbx1nmu%3Dfrp&__hv=2fMEYCIQDL51MH8YgiPlS2YClthsr6S32TC4XVYV%2BBaaU9nFYxOwIhAKtG80tcGuUAjA0qklBoQvGIa4df8YIMVihOzfvywNDG')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=400&q=80" alt="Mahjong Wins 3" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Mahjong Wins 3</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 5. Wild Bandito 2 -->
+                <div onclick="launchGame('Wild Bandito 2', 'https://m.9ffyu1g9c.com/104/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=06gvo%3Da45uca68u%3Dius&or=09bcjcrl%3De2thd1tsa%3Dlxv&__hv=2fMEUCIA2lKckUPngoN%2Fq%2Bv%2BAlFzDzdW69Ga%2FPAiuBrbCYr1%2FVAiEAxBYIbOouL%2BbsdNXJ7lAMPXAa%2FMULM7bVh%2BLDIIpqw%2Bc%3D')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80" alt="Wild Bandito 2" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Wild Bandito 2</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 6. Lucky Neko -->
+                <div onclick="launchGame('Lucky Neko', 'https://m.9ffyu1g9c.com/89/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=17rgz%3Dl45fnl68f%3Dtfd&or=22opwpey%3Dr2guq1gfn%3Dyki&__hv=2fMEYCIQDL51MH8YgiPlS2YClthsr6S32TC4XVYV%2BBaaU9nFYxOwIhAKtG80tcGuUAjA0qklBoQvGIa4df8YIMVihOzfvywNDG')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" alt="Lucky Neko" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Lucky Neko</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 7. Wild Bounty Showdown -->
+                <div onclick="launchGame('Wild Bounty Showdown', 'https://m.yziyu02by.com/87/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=04etm%3Dy45say68s%3Dgsq&or=15hipixr%3Dyg5nj01pp%3Drdb&__hv=2fMEQCIBEBAYo4p0GVPGNCC%2FNGta4AZxCiwTq00xljI0RnJATWAiA2v5GIg97mgHBSQvatP3eMOtxnHkv7UTF4VSe6Ohf6hA%3D%3D&__sv=010301Rg1_zKTOpdBmtn6Y08fUT4Mv_UH1n2Wl8eAQXxccd1s')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80" alt="Wild Bounty Showdown" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Wild Bounty Showdown</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 8. Game Slot Nusantara -->
+                <div onclick="launchGame('Game Slot Nusantara', 'https://m.7df5u.com/1508783/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=16qfy%3Djafkizs86%3Dsec&or=20mnuncw%3Dbd2e2%3Dwig&__hv=2fMEYCIQDxC0PnNoRdBxY9cmPbAVeyv%2FCqsSRGOAWpF1TQlZMBdwIhAPZi3sO0D2qFxPfIv4tWHN9NNJuC35lcnviqJyPkVqTP&__sv=010201ZVps6prMz_hp10WegYY')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=400&q=80" alt="Game Slot Nusantara" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Game Slot Nusantara</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 9. Game Slot Nusantara 1492288 -->
+                <div onclick="launchGame('Game Slot Nusantara 1492288', 'https://m.9ffyu1g9c.com/1492288/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=09jyr%3Dd45xfd68x%3Dlxv&or=18klslau%3Dn2cqm1cbj%3Duge&__hv=2fMEUCIA2lKckUPngoN%2Fq%2Bv%2BAlFzDzdW69Ga%2FPAiuBrbCYr1%2FVAiEAxBYIbOouL%2BbsdNXJ7lAMPXAa%2FMULM7bVh%2BLDIIpqw%2Bc%3D')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=400&q=80" alt="Game Slot Nusantara 1492288" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Game Slot Nusantara 1492288</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 10. Game Slot Nusantara 1671262 -->
+                <div onclick="launchGame('Game Slot Nusantara 1671262', 'https://m.yziyu02by.com/1671262/index.html?ot=042E90C8-59BC-2D79-1D69-4C679B481F01&l=id&btt=1&ops=749071b6a50f9518ae31f098ebdf1fb0959784504jagung900959784504jpraa&ao=24yng%3Ds45mus68m%3Damk&or=18klslau%3Dbj5qm01ss%3Duge&__hv=2fMEQCIBEBAYo4p0GVPGNCC%2FNGta4AZxCiwTq00xljI0RnJATWAiA2v5GIg97mgHBSQvatP3eMOtxnHkv7UTF4VSe6Ohf6hA%3D%3D&__sv=010301Rg1_zKTOpdBmtn6Y08fUT4Mv_UH1n2Wl8eAQXxccd1s')" class="bg-neutral-900/90 border border-neutral-800 hover:border-red-600 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:scale-105 group shadow-xl">
+                    <div class="relative aspect-[4/3] overflow-hidden">
+                        <span class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow z-10">TERBARU</span>
+                        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80" alt="Game Slot Nusantara 1671262" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-3 text-center">
+                        <p class="font-bold text-white text-xs truncate">Game Slot Nusantara 1671262</p>
+                        <p class="text-[10px] text-amber-400 mt-0.5">Mainkan Sekarang</p>
+                    </div>
+                </div>
+
+                <!-- 11-40: Slot Kosong Siap Diisi -->
+                <script>
+                    for(let i=11; i<=40; i++) {
+                        document.write(`
+                            <div id="slot-${i}" class="bg-neutral-900/50 border border-dashed border-neutral-700 rounded-2xl overflow-hidden p-4 flex flex-col items-center justify-center text-center opacity-60">
+                                <div class="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center text-neutral-500 mb-2"><i class="fa-solid fa-plus"></i></div>
+                                <p class="font-bold text-neutral-400 text-xs">Game Kosong ${i}</p>
+                                <p class="text-[10px] text-neutral-500 mt-1">Menunggu Link Game</p>
+                            </div>
+                        `);
+                    }
+                </script>
+
+            </div>
+        </div>
+
+        <!-- VIEW 4: IFRAME GAME PEMUTAR -->
+        <div id="slotGameView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+            <div class="flex items-center justify-between bg-black/85 border border-red-800/60 p-4 rounded-2xl">
+                <button onclick="switchView('slotLobby')" class="bg-neutral-900 hover:bg-neutral-800 text-white font-bold px-4 py-2 rounded-xl text-xs border border-neutral-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Game
+                </button>
+                <div class="text-center hidden sm:block">
+                    <h2 id="activeGameTitle" class="text-base font-black text-amber-400 uppercase tracking-wider">Slot Game</h2>
+                    <p class="text-[11px] text-neutral-300">Server Terhubung NUSANTARA4D</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="externalWindowBtn" href="#" target="_blank" class="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-external-link"></i> Layar Penuh
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-black border-4 border-red-600 rounded-3xl overflow-hidden shadow-2xl relative w-full h-[75vh]">
+                <iframe id="slotIframe" src="" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+
+        <!-- VIEW 5: PROMOSI & BONUS -->
+        <div id="promotionsView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="bg-card-candi-wayang border-2 border-red-600/70 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+                <span class="bg-red-600/40 text-amber-300 text-xs font-bold px-3.5 py-1.5 rounded-full border border-amber-400/40 uppercase tracking-widest inline-flex items-center gap-2 shadow-lg mb-3">
+                    <i class="fa-solid fa-gift text-amber-400"></i> Penawaran Istimewa Nusantara
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Bonus & Promosi NUSANTARA4D</h2>
+                <p class="text-neutral-200 text-sm sm:text-base mt-2 max-w-2xl mx-auto">
+                    Manfaatkan berbagai bonus menarik dan menguntungkan setiap hari khusus untuk member setia NUSANTARA4D.
+                </p>
+            </div>
+        </div>
+
+        <!-- VIEW 6: PUSAT BANTUAN -->
+        <div id="helpView" class="hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="bg-card-candi-wayang border-2 border-red-600/70 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+                <span class="bg-red-600/40 text-amber-300 text-xs font-bold px-3.5 py-1.5 rounded-full border border-amber-400/40 uppercase tracking-widest inline-flex items-center gap-2 shadow-lg mb-3">
+                    <i class="fa-solid fa-circle-question text-amber-400"></i> Layanan Dukungan 24 Jam
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Pusat Bantuan NUSANTARA4D</h2>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL PANEL PEMILIK / ADMIN (KENDALI ACC DEPOSIT, WITHDRAW & BLOKIR AKUN) -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-neutral-950 border-2 border-amber-500/80 w-full max-w-5xl rounded-3xl p-6 relative shadow-2xl my-8">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center gap-2 mb-6">
+                <div class="bg-amber-500 text-black px-3 py-1 rounded-lg font-black text-xs uppercase">PEMILIK WEBSITE</div>
+                <h3 class="text-xl font-black text-white">Panel Kendali Utama Nusantara4D</h3>
+            </div>
+
+            <!-- Tab Navigasi Admin -->
+            <div class="flex border-b border-neutral-800 mb-6 gap-4">
+                <button onclick="switchAdminTab('requests')" id="tabBtnReq" class="pb-2 text-xs font-bold border-b-2 border-amber-400 text-amber-400">
+                    <i class="fa-solid fa-clock-rotate-left"></i> ACC Deposit & Withdraw Pending
+                </button>
+                <button onclick="switchAdminTab('users')" id="tabBtnUsers" class="pb-2 text-xs font-bold text-neutral-400 hover:text-white">
+                    <i class="fa-solid fa-users-gear"></i> Kelola & Blokir Akun Pemain
+                </button>
+            </div>
+
+            <!-- TAB 1: ACC PERMINTAAN DEPOSIT & WITHDRAW -->
+            <div id="adminTabReq" class="space-y-4">
+                <h4 class="text-xs font-bold text-neutral-400 uppercase">Daftar Permintaan Menunggu ACC Pemilik:</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-neutral-900 text-amber-400 border-b border-neutral-800">
+                            <tr>
+                                <th class="p-3">Waktu</th>
+                                <th class="p-3">User ID</th>
+                                <th class="p-3">Jenis</th>
+                                <th class="p-3">Metode/Rekening Pemain</th>
+                                <th class="p-3">Jumlah</th>
+                                <th class="p-3 text-center">Tindakan Pemilik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPendingTxTable" class="divide-y divide-neutral-800 text-neutral-200">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 2: DATA SEMUA PEMAIN & BLOKIR -->
+            <div id="adminTabUsers" class="hidden space-y-4">
+                <h4 class="text-xs font-bold text-neutral-400 uppercase">Daftar Seluruh Akun Pemain Terdaftar:</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-neutral-900 text-amber-400 border-b border-neutral-800">
+                            <tr>
+                                <th class="p-3">User ID</th>
+                                <th class="p-3">Kata Sandi</th>
+                                <th class="p-3">Data Bank Pemain</th>
+                                <th class="p-3">Saldo Koin</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Aksi Pemilik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTable" class="divide-y divide-neutral-800 text-neutral-200">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PENDAFTARAN AKUN BARU -->
+    <div id="registerModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-modal-nusantara border-2 border-red-800/80 w-full max-w-md rounded-3xl p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-amber-400 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-red-500"></i> Pendaftaran Akun Baru
+            </h3>
+            <p class="text-xs text-neutral-300 mb-6">Isi formulir di bawah ini untuk membuat akun NUSANTARA4D:</p>
+
+            <form onsubmit="handleRegister(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-neutral-300 mb-1">User ID / Username Pilihan</label>
+                    <input type="text" id="regUsername" placeholder="Contoh: PemainHoki88" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-neutral-300 mb-1">Kata Sandi / Password</label>
+                    <input type="password" id="regPassword" placeholder="Minimal 6 Karakter" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                </div>
+
+                <div class="pt-2 border-t border-neutral-800">
+                    <p class="text-[11px] text-amber-300 font-bold mb-2"><i class="fa-solid fa-building-columns"></i> Data Bank / Rekening Penerima Withdraw:</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-neutral-300 mb-1">Pilih Bank / E-Wallet</label>
+                            <select id="regBank" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                                <option value="BANK BCA">BANK BCA</option>
+                                <option value="BANK BRI">BANK BRI</option>
+                                <option value="BANK BNI">BANK BNI</option>
+                                <option value="BANK MANDIRI">BANK MANDIRI</option>
+                                <option value="SEABANK">SEABANK</option>
+                                <option value="DANA">DANA</option>
+                                <option value="OVO">OVO</option>
+                                <option value="GOPAY">GOPAY</option>
+                                <option value="SHOPEE PAY">SHOPEE PAY</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-neutral-300 mb-1">Nomor Rekening / No. HP</label>
+                            <input type="text" id="regAccNo" placeholder="Contoh: 1234567890" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-neutral-300 mb-1">Nama Pemilik Rekening</label>
+                            <input type="text" id="regAccName" placeholder="Sesuai buku tabungan / e-wallet" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-600">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-red-600/30 uppercase tracking-wider mt-4">
+                    Daftar Akun Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DEPOSIT (BANK & E-WALLET) -->
+    <div id="depositModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-modal-nusantara border-2 border-red-800/80 w-full max-w-md rounded-3xl p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-amber-400 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-red-500"></i> Top Up / Deposit Koin
+            </h3>
+            <p class="text-xs text-neutral-300 mb-6">Pilih metode pembayaran (Bank atau E-Wallet) tujuan Anda di bawah ini:</p>
+
+            <form onsubmit="handleDeposit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-neutral-300 mb-1.5">Pilih Bank / E-Wallet Tujuan</label>
+                    <select id="depositMethod" onchange="updateDestinationAccount()" class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-red-600 font-semibold">
+                        <optgroup label="--- BANK TRANSFER ---">
+                            <option value="BANK BRI">BANK BRI (No. Rek: 0123-01-051234-50-8 a.n. PT Nusantara Global)</option>
+                            <option value="BANK BNI">BANK BNI (No. Rek: 0987654321 a.n. PT Nusantara Global)</option>
+                            <option value="BANK BCA">BANK BCA (No. Rek: 1234567890 a.n. PT Nusantara Global)</option>
+                            <option value="BANK MANDIRI">BANK MANDIRI (No. Rek: 1420008899776 a.n. PT Nusantara Global)</option>
+                            <option value="SEABANK">SEABANK (No. Rek: 901234567890 a.n. PT Nusantara Global)</option>
+                        </optgroup>
+                        <optgroup label="--- E-WALLET ---">
+                            <option value="DANA">DANA (No. HP / QRIS: 081234567890 a.n. Nusantara VIP)</option>
+                            <option value="OVO">OVO (No. HP / QRIS: 081234567890 a.n. Nusantara VIP)</option>
+                            <option value="GOPAY">GOPAY (No. HP / QRIS: 081234567890 a.n. Nusantara VIP)</option>
+                            <option value="SHOPEE PAY">SHOPEE PAY (No. HP / QRIS: 081234567890 a.n. Nusantara VIP)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="bg-neutral-950/80 p-3.5 rounded-xl border border-red-900/50">
+                    <p class="text-[11px] text-amber-300 font-bold mb-1"><i class="fa-solid fa-circle-info"></i> Rekening / Akun Tujuan Transfer:</p>
+                    <p id="destinationAccountInfo" class="text-xs text-white font-mono font-bold select-all">0123-01-051234-50-8 (BRI)</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-neutral-300">Jumlah Nominal Deposit (Rp)</label>
+                        <span class="text-[10px] text-amber-400">Min: 10.000 | Maks: 10.000.000</span>
+                    </div>
+                    <input type="text" id="depositAmountFormatted" placeholder="Contoh: 10.000" oninput="formatRupiahInput(this)" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-red-600 font-bold tracking-wide">
+                    <input type="hidden" id="depositAmount" value="0">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-neutral-300 mb-1.5">Unggah Bukti Transfer / Struk</label>
+                    <input type="file" id="depositProof" accept="image/*" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-red-600/30">
+                    Kirim Permintaan Deposit
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL WITHDRAW -->
+    <div id="withdrawModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-modal-nusantara border-2 border-red-800/80 w-full max-w-md rounded-3xl p-6 sm:p-8 relative shadow-2xl my-8">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-amber-400 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-money-bill-transfer text-amber-400"></i> Withdraw (Pencairan Koin)
+            </h3>
+            <p class="text-xs text-neutral-300 mb-6">Cairkan koin kemenangan Anda ke rekening terdaftar saat pendaftaran:</p>
+
+            <form onsubmit="handleWithdraw(event)" class="space-y-4">
+                <div class="bg-neutral-950/90 p-4 rounded-xl border border-red-900/60 space-y-3">
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+                        <span class="text-xs text-neutral-400">Bank / E-Wallet Tujuan:</span>
+                        <span id="withdrawBankStatic" class="text-xs font-black text-amber-400">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+                        <span class="text-xs text-neutral-400">Nomor Rekening / No. HP:</span>
+                        <span id="withdrawAccountNoStatic" class="text-xs font-mono font-extrabold text-white">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-neutral-400">Atas Nama Pemilik:</span>
+                        <span id="withdrawAccountNameStatic" class="text-xs font-extrabold text-white">-</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-neutral-300">Jumlah Koin yang Dicairkan</label>
+                        <span class="text-[10px] text-amber-400">Min: 50.000</span>
+                    </div>
+                    <input type="text" id="withdrawAmountFormatted" placeholder="Contoh: 50.000" oninput="formatWithdrawRupiah(this)" required class="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-red-600 font-bold tracking-wide">
+                    <input type="hidden" id="withdrawAmount" value="0">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-neutral-950 font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-amber-500/20">
+                    Proses Withdraw Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Avatar Selector -->
+    <div id="avatarModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-modal-nusantara border border-red-900/60 w-full max-w-sm rounded-2xl p-6 relative shadow-2xl">
+            <button onclick="closeAvatarModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-white mb-4">Pilih Foto Profil (Avatar)</h3>
+            <div class="grid grid-cols-3 gap-4 mb-6" id="avatarGrid"></div>
+            <button onclick="closeAvatarModal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                Selesai
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Customer Service -->
+    <div id="csModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-modal-nusantara border border-red-900/60 w-full max-w-md rounded-2xl p-6 sm:p-8 relative shadow-2xl text-center space-y-4">
+            <button onclick="closeCSModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="w-16 h-16 bg-red-600/30 rounded-full flex items-center justify-center text-red-500 text-3xl mx-auto border border-red-600/50">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white">Layanan Customer Service 24/7</h3>
+            <p class="text-xs text-neutral-300 leading-relaxed">Tim dukungan resmi NUSANTARA4D siap membantu kendala deposit, withdraw, maupun pertanyaan permainan Anda kapan saja via LiveChat resmi.</p>
+            <a href="https://wa.me/" target="_blank" class="inline-block bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-xl text-xs transition shadow-lg">
+                <i class="fa-brands fa-whatsapp text-sm"></i> Hubungi WhatsApp CS Resmi
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-neutral-950/90 border-t border-red-900/60 py-6 text-center text-xs text-neutral-400 backdrop-blur-md">
+        <p>&copy; 2026 NUSANTARA4D. All rights reserved. Sesi ID tersimpan otomatis.</p>
+    </footer>
+
+    <!-- JavaScript Aplikasi Lengkap + Logika Pemilik/Admin -->
+    <script>
+        let isLoggedIn = false;
+        let registeredUsers = {}; 
+        let pendingTransactions = []; // Queue Deposit & Withdraw yang pending ACC
+        let activeUser = null;
+
+        const avatarSeeds = ["Pemain", "Gamer1", "HeroX", "VIP99", "ProMaster", "AlphaCode"];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedDb = localStorage.getItem('n4d_users_db');
+            const savedTx = localStorage.getItem('n4d_pending_tx');
+
+            if (savedDb) registeredUsers = JSON.parse(savedDb);
+            if (savedTx) pendingTransactions = JSON.parse(savedTx);
+
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+
+            updateUserInterface();
+            updateLiveTicker();
+            buildAvatarGrid();
+        });
+
+        function saveData() {
+            localStorage.setItem('n4d_users_db', JSON.stringify(registeredUsers));
+            localStorage.setItem('n4d_pending_tx', JSON.stringify(pendingTransactions));
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+
+            if (!u || !p) {
+                alert('Silakan isi User ID dan Kata Sandi.');
+                return;
+            }
+
+            const userKey = u.toLowerCase();
+
+            // AKSES LOGIN KHUSUS PEMILIK WEBSITE (ADMIN)
+            if (userKey === 'admin' && p === 'admin123') {
+                isLoggedIn = true;
+                activeUser = { username: 'PEMILIK / ADMIN', isAdmin: true, coins: 999999, avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin' };
+                updateUserInterface();
+                openAdminModal();
+                alert('Selamat Datang Pemilik / Admin Nusantara4D!');
+                return;
+            }
+
+            // PENGECEKAN KETAT: JIKA BELUM PERNAH DAFTAR, TOLAK LOG IN!
+            if (!registeredUsers[userKey]) {
+                alert('⚠️ ID AKUN BELUM TERDAFTAR!\n\nUser ID "' + u + '" tidak ditemukan. Anda WAJIB mendaftar akun baru terlebih dahulu sebelum dapat masuk.');
+                openRegisterModal();
+                document.getElementById('regUsername').value = u;
+                return;
+            }
+
+            // CEK STATUS BLOKIR AKUN PEMAIN OLEH PEMILIK
+            if (registeredUsers[userKey].isBlocked) {
+                alert('🚫 AKUN DIBLOKIR!\n\nAkun Anda telah diblokir oleh Pemilik/Admin karena melanggar ketentuan. Silakan hubungi Customer Service.');
+                return;
+            }
+
+            // PENGECEKAN KATA SANDI
+            if (registeredUsers[userKey].password !== p) {
+                alert('❌ Kata Sandi Anda Salah! Silakan coba lagi.');
+                return;
+            }
+
+            // Valid & Terdaftar
+            activeUser = registeredUsers[userKey];
+            isLoggedIn = true;
+
+            updateUserInterface();
+            renderTransactions();
+            switchView('lobby');
+            alert('Selamat Datang Kembali, ' + activeUser.username + '!');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUsername').value.trim();
+            const p = document.getElementById('regPassword').value.trim();
+            const bank = document.getElementById('regBank').value;
+            const accNo = document.getElementById('regAccNo').value.trim();
+            const accName = document.getElementById('regAccName').value.trim();
+
+            if (!u || !p || !accNo || !accName) {
+                alert('Mohon lengkapi seluruh formulir pendaftaran!');
+                return;
+            }
+
+            const userKey = u.toLowerCase();
+
+            if (registeredUsers[userKey]) {
+                alert('⚠️ User ID ini sudah terdaftar! Silakan login menggunakan User ID tersebut.');
+                closeRegisterModal();
+                document.getElementById('loginUsername').value = u;
+                focusLogin();
+                return;
+            }
+
+            const newUser = {
+                username: u,
+                password: p,
+                coins: 1000,
+                isBlocked: false,
+                avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${u}`,
+                bank: {
+                    bankName: bank,
+                    accountNumber: accNo,
+                    accountName: accName
+                }
+            };
+
+            registeredUsers[userKey] = newUser;
+            activeUser = newUser;
+            isLoggedIn = true;
+
+            saveData();
+
+            document.getElementById('loginUsername').value = u;
+            document.getElementById('loginPassword').value = p;
+
+            updateUserInterface();
+            renderTransactions();
+            closeRegisterModal();
+            switchView('lobby');
+            alert('🎉 PENDAFTARAN BERHASIL!\n\nAkun Anda telah terdaftar dan Anda resmi masuk ke Lobi Utama.');
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            activeUser = null;
+            updateUserInterface();
+            switchView('home');
+            alert('Anda telah keluar dari akun.');
+        }
+
+        // DEPOSIT PEMAIN (STATUS MENJADI PENDING UNTUK DI ACC PEMILIK)
+        function handleDeposit(e) {
+            e.preventDefault();
+            const method = document.getElementById('depositMethod').value;
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            
+            if (amount < 10000) { alert('Minimal deposit adalah Rp 10.000'); return; }
+
+            const tx = {
+                id: Date.now(),
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date().toLocaleDateString('id-ID'),
+                username: activeUser.username,
+                type: 'Deposit (' + method + ')',
+                detail: 'Top up saldo via ' + method,
+                amount: amount,
+                status: 'PENDING'
+            };
+
+            pendingTransactions.unshift(tx);
+            saveData();
+
+            updateUserInterface();
+            renderTransactions();
+            closeModal();
+            alert('Permintaan Deposit Sebesar Rp ' + amount.toLocaleString('id-ID') + ' Berhasil Dikirim!\n\nStatus saat ini PENDING. Koin akan ditambahkan setelah disetujui (ACC) oleh Pemilik/Admin.');
+        }
+
+        // WITHDRAW PEMAIN (STATUS MENJADI PENDING UNTUK DI ACC PEMILIK)
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+
+            if (amount < 50000) { alert('Minimal withdraw adalah Rp 50.000'); return; }
+            if (amount > activeUser.coins) { alert('Saldo koin Anda tidak mencukupi!'); return; }
+
+            const tx = {
+                id: Date.now(),
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date().toLocaleDateString('id-ID'),
+                username: activeUser.username,
+                type: 'Withdraw (' + activeUser.bank.bankName + ')',
+                detail: 'Pencairan ke ' + activeUser.bank.bankName + ' (' + activeUser.bank.accountNumber + ' a.n. ' + activeUser.bank.accountName + ')',
+                amount: amount,
+                status: 'PENDING'
+            };
+
+            pendingTransactions.unshift(tx);
+            saveData();
+
+            updateUserInterface();
+            renderTransactions();
+            closeModal();
+            alert('Permintaan Withdraw Sebesar Rp ' + amount.toLocaleString('id-ID') + ' Berhasil Dikirim!\n\nStatus saat ini PENDING. Dana akan diproses setelah disetujui (ACC) oleh Pemilik/Admin.');
+        }
+
+        // KENDALI PEMILIK: SETUJUI / ACC TRANSAKSI
+        function approveTx(txId) {
+            const index = pendingTransactions.findIndex(t => t.id === txId);
+            if (index === -1) return;
+
+            const tx = pendingTransactions[index];
+            const playerKey = tx.username.toLowerCase();
+
+            if (!registeredUsers[playerKey]) {
+                alert('Data pemain tidak ditemukan!');
+                return;
+            }
+
+            if (tx.type.includes('Deposit')) {
+                registeredUsers[playerKey].coins += tx.amount;
+                tx.status = 'DISETUJUI (ACC)';
+            } else if (tx.type.includes('Withdraw')) {
+                if (registeredUsers[playerKey].coins < tx.amount) {
+                    alert('Gagal ACC: Saldo Koin pemain saat ini tidak cukup!');
+                    return;
+                }
+                registeredUsers[playerKey].coins -= tx.amount;
+                tx.status = 'DISETUJUI (ACC)';
+            }
+
+            saveData();
+            renderAdminPanel();
+            updateUserInterface();
+            alert('Transaksi berhasil DISETUJUI (ACC)! Saldo koin pemain telah disesuaikan.');
+        }
+
+        // KENDALI PEMILIK: TOLAK TRANSAKSI
+        function rejectTx(txId) {
+            const index = pendingTransactions.findIndex(t => t.id === txId);
+            if (index === -1) return;
+
+            pendingTransactions[index].status = 'DITOLAK';
+            saveData();
+            renderAdminPanel();
+            alert('Permintaan transaksi berhasil DITOLAK!');
+        }
+
+        // KENDALI PEMILIK: BLOKIR / UNBLOKIR AKUN PEMAIN
+        function toggleBlockUser(usernameKey) {
+            if (!registeredUsers[usernameKey]) return;
+            registeredUsers[usernameKey].isBlocked = !registeredUsers[usernameKey].isBlocked;
+            saveData();
+            renderAdminPanel();
+            const status = registeredUsers[usernameKey].isBlocked ? 'DIBLOKIR' : 'DIBUKA';
+            alert('Akun ' + registeredUsers[usernameKey].username + ' telah berhasil ' + status + '!');
+        }
+
+        // RENDERING TAMPILAN PANEL PEMILIK
+        function renderAdminPanel() {
+            const pendingTable = document.getElementById('adminPendingTxTable');
+            pendingTable.innerHTML = '';
+            
+            const pendingList = pendingTransactions.filter(t => t.status === 'PENDING');
+            if (pendingList.length === 0) {
+                pendingTable.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-neutral-500">Tidak ada permintaan deposit/withdraw yang pending saat ini.</td></tr>`;
+            } else {
+                pendingList.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-neutral-800';
+                    tr.innerHTML = `
+                        <td class="p-3 text-neutral-400">${t.time}</td>
+                        <td class="p-3 font-bold text-amber-400">${t.username}</td>
+                        <td class="p-3 font-bold ${t.type.includes('Deposit') ? 'text-green-400' : 'text-red-400'}">${t.type}</td>
+                        <td class="p-3 text-neutral-300">${t.detail}</td>
+                        <td class="p-3 font-extrabold text-white">Rp ${t.amount.toLocaleString('id-ID')}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="approveTx(${t.id})" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded font-bold">ACC / Setujui</button>
+                            <button onclick="rejectTx(${t.id})" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded font-bold">Tolak</button>
+                        </td>
+                    `;
+                    pendingTable.appendChild(tr);
+                });
+            }
+
+            const usersTable = document.getElementById('adminUsersTable');
+            usersTable.innerHTML = '';
+            Object.keys(registeredUsers).forEach(k => {
+                const u = registeredUsers[k];
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-neutral-800';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white">${u.username}</td>
+                    <td class="p-3 text-neutral-400 font-mono">${u.password}</td>
+                    <td class="p-3 text-neutral-300">${u.bank ? u.bank.bankName + ' - ' + u.bank.accountNumber + ' (' + u.bank.accountName + ')' : '-'}</td>
+                    <td class="p-3 font-extrabold text-amber-400">${u.coins.toLocaleString('id-ID')} Koin</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.isBlocked ? 'bg-red-600 text-white' : 'bg-green-600/30 text-green-400'}">${u.isBlocked ? 'DIBLOKIR' : 'AKTIF'}</span></td>
+                    <td class="p-3 text-center">
+                        <button onclick="toggleBlockUser('${k}')" class="px-3 py-1 rounded font-bold ${u.isBlocked ? 'bg-amber-500 text-black' : 'bg-red-600 text-white'}">${u.isBlocked ? 'Buka Blokir' : 'Blokir Akun'}</button>
+                    </td>
+                `;
+                usersTable.appendChild(tr);
+            });
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById('transactionHistoryTable');
+            if (!tbody) return;
+            if (!activeUser || activeUser.isAdmin) return;
+
+            const myTx = pendingTransactions.filter(t => t.username.toLowerCase() === activeUser.username.toLowerCase());
+            if (myTx.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-neutral-500 text-xs">Belum ada transaksi atau aktivitas permainan yang tercatat.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            myTx.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-neutral-900/50 transition';
+                tr.innerHTML = `
+                    <td class="p-3 text-xs text-neutral-400">${t.time}</td>
+                    <td class="p-3 text-xs font-bold text-white">${t.type}</td>
+                    <td class="p-3 text-xs text-neutral-300">${t.detail}</td>
+                    <td class="p-3 text-xs font-extrabold ${t.type.includes('Deposit') ? 'text-green-400' : 'text-amber-400'}">Rp ${t.amount.toLocaleString('id-ID')}</td>
+                    <td class="p-3 text-xs"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${t.status === 'DISETUJUI (ACC)' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : (t.status === 'DITOLAK' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-amber-500/20 text-amber-400 border border-amber-500/40')}">${t.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateUserInterface() {
+            const loggedInHeader = document.getElementById('loggedInUserHeader');
+            const loggedOutHeader = document.getElementById('loggedOutUserHeader');
+
+            if (isLoggedIn && activeUser) {
+                loggedInHeader.classList.remove('hidden');
+                loggedOutHeader.classList.add('hidden');
+
+                if (activeUser.isAdmin) {
+                    document.getElementById('adminNavBtn').classList.remove('hidden');
+                    document.getElementById('displayName').textContent = 'PEMILIK / ADMIN';
+                    document.getElementById('headerUsername').textContent = 'PEMILIK';
+                    document.getElementById('displayCoins').textContent = 'UNLIMITED';
+                    document.getElementById('headerCoins').textContent = 'UNLIMITED';
+                } else {
+                    document.getElementById('adminNavBtn').classList.add('hidden');
+                    document.getElementById('displayName').textContent = activeUser.username;
+                    document.getElementById('headerUsername').textContent = activeUser.username;
+                    document.getElementById('displayCoins').textContent = activeUser.coins.toLocaleString('id-ID') + ' Koin';
+                    document.getElementById('headerCoins').textContent = activeUser.coins.toLocaleString('id-ID') + ' Koin';
+                    document.getElementById('headerAvatar').src = activeUser.avatar;
+                    document.getElementById('lobbyAvatar').src = activeUser.avatar;
+
+                    document.getElementById('withdrawBankStatic').textContent = activeUser.bank.bankName;
+                    document.getElementById('withdrawAccountNoStatic').textContent = activeUser.bank.accountNumber;
+                    document.getElementById('withdrawAccountNameStatic').textContent = activeUser.bank.accountName;
+                }
+            } else {
+                loggedInHeader.classList.add('hidden');
+                loggedOutHeader.classList.remove('hidden');
+                document.getElementById('adminNavBtn').classList.add('hidden');
+            }
+        }
+
+        function openAdminModal() {
+            if (!activeUser || !activeUser.isAdmin) return;
+            document.getElementById('adminModal').classList.remove('hidden');
+            renderAdminPanel();
+        }
+
+        function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+        function switchAdminTab(tab) {
+            if (tab === 'requests') {
+                document.getElementById('adminTabReq').classList.remove('hidden');
+                document.getElementById('adminTabUsers').classList.add('hidden');
+                document.getElementById('tabBtnReq').classList.add('border-amber-400', 'text-amber-400');
+                document.getElementById('tabBtnUsers').classList.remove('border-amber-400', 'text-amber-400');
+            } else {
+                document.getElementById('adminTabReq').classList.add('hidden');
+                document.getElementById('adminTabUsers').classList.remove('hidden');
+                document.getElementById('tabBtnUsers').classList.add('border-amber-400', 'text-amber-400');
+                document.getElementById('tabBtnReq').classList.remove('border-amber-400', 'text-amber-400');
+            }
+        }
+
+        function switchView(viewName) {
+            document.getElementById('homeView').classList.add('hidden');
+            document.getElementById('lobbyView').classList.add('hidden');
+            document.getElementById('slotLobbyView').classList.add('hidden');
+            document.getElementById('slotGameView').classList.add('hidden');
+            document.getElementById('promotionsView').classList.add('hidden');
+            document.getElementById('helpView').classList.add('hidden');
+
+            if (viewName === 'home') document.getElementById('homeView').classList.remove('hidden');
+            else if (viewName === 'lobby') document.getElementById('lobbyView').classList.remove('hidden');
+            else if (viewName === 'slotLobby') document.getElementById('slotLobbyView').classList.remove('hidden');
+            else if (viewName === 'promotions') document.getElementById('promotionsView').classList.remove('hidden');
+            else if (viewName === 'help') document.getElementById('helpView').classList.remove('hidden');
+        }
+
+        function checkAuthAndSwitch(viewName) {
+            if (!isLoggedIn) {
+                alert('⚠️ Anda Harus Login Terlebih Dahulu!');
+                switchView('home');
+                focusLogin();
+                return;
+            }
+            switchView(viewName);
+        }
+
+        function openSlotLobby() {
+            if (!isLoggedIn) {
+                alert('⚠️ Anda Harus Login Terlebih Dahulu!');
+                switchView('home');
+                focusLogin();
+                return;
+            }
+            switchView('slotLobby');
+        }
+
+        function launchGame(gameTitle, gameUrl) {
+            document.getElementById('slotLobbyView').classList.add('hidden');
+            document.getElementById('slotGameView').classList.remove('hidden');
+            document.getElementById('activeGameTitle').textContent = gameTitle;
+            document.getElementById('slotIframe').src = gameUrl;
+            document.getElementById('externalWindowBtn').href = gameUrl;
+        }
+
+        function formatRupiahInput(input) {
+            let val = input.value.replace(/[^,\d]/g, '');
+            let split = val.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            input.value = rupiah;
+            document.getElementById('depositAmount').value = parseInt(val) || 0;
+        }
+
+        function formatWithdrawRupiah(input) {
+            let val = input.value.replace(/[^,\d]/g, '');
+            let split = val.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            input.value = rupiah;
+            document.getElementById('withdrawAmount').value = parseInt(val) || 0;
+        }
+
+        function openModal(type) {
+            if (type === 'deposit') {
+                document.getElementById('depositModal').classList.remove('hidden');
+                updateDestinationAccount();
+            } else if (type === 'withdraw') {
+                document.getElementById('withdrawModal').classList.remove('hidden');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('depositModal').classList.add('hidden');
+            document.getElementById('withdrawModal').classList.add('hidden');
+        }
+
+        function openCSModal() { document.getElementById('csModal').classList.remove('hidden'); }
+        function closeCSModal() { document.getElementById('csModal').classList.add('hidden'); }
+        function openAvatarModal() { document.getElementById('avatarModal').classList.remove('hidden'); }
+        function closeAvatarModal() { document.getElementById('avatarModal').classList.add('hidden'); }
+        function openRegisterModal() { document.getElementById('registerModal').classList.remove('hidden'); }
+        function closeRegisterModal() { document.getElementById('registerModal').classList.add('hidden'); }
+        function focusLogin() { document.getElementById('loginUsername').focus(); }
+
+        function buildAvatarGrid() {
+            const grid = document.getElementById('avatarGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            avatarSeeds.forEach(seed => {
+                const url = `https://api.dicebear.com/7.x/bottts/svg?seed=${seed}`;
+                const div = document.createElement('div');
+                div.className = `cursor-pointer p-2 rounded-xl border-2 border-neutral-800 bg-neutral-900 hover:border-red-600 transition`;
+                div.innerHTML = `<img src="${url}" class="w-12 h-12 mx-auto rounded-full">`;
+                div.onclick = () => {
+                    if (activeUser) {
+                        activeUser.avatar = url;
+                        updateUserInterface();
+                        closeAvatarModal();
+                    }
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        function updateDestinationAccount() {
+            const select = document.getElementById('depositMethod');
+            const info = document.getElementById('destinationAccountInfo');
+            const val = select.value;
+            let text = "";
+            if (val === 'BANK BRI') text = "0123-01-051234-50-8 a.n. PT Nusantara Global (BRI)";
+            else if (val === 'BANK BNI') text = "0987654321 a.n. PT Nusantara Global (BNI)";
+            else if (val === 'BANK BCA') text = "1234567890 a.n. PT Nusantara Global (BCA)";
+            else if (val === 'BANK MANDIRI') text = "1420008899776 a.n. PT Nusantara Global (Mandiri)";
+            else if (val === 'SEABANK') text = "901234567890 a.n. PT Nusantara Global (Seabank)";
+            else text = "081234567890 a.n. Nusantara VIP (" + val + ")";
+            info.textContent = text;
+        }
+
+        const sampleNames = ["Yanto", "Meou", "Budi", "Siti", "Joko", "Rian", "Dewi", "Agus", "Putri", "Eko"];
+        function getRandomUser() {
+            const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+            return `${name}***${Math.floor(Math.random() * 90) + 10}`;
+        }
+        function getRandomAmount(min, max) {
+            return (Math.floor((Math.floor(Math.random() * (max - min + 1)) + min) / 100) * 100).toLocaleString('id-ID');
+        }
+        function updateLiveTicker() {
+            const tickerEl = document.getElementById('liveNotificationTicker');
+            if (!tickerEl) return;
+            const isWithdraw = Math.random() > 0.45;
+            tickerEl.textContent = isWithdraw ? `🎉 Selamat User ID ${getRandomUser()} Berhasil Withdraw Sebesar Rp ${getRandomAmount(150000, 14500000)}` : `💎 Selamat User ID ${getRandomUser()} Berhasil Deposit Sebesar Rp ${getRandomAmount(150000, 14500000)}`;
+        }
+        setInterval(updateLiveTicker, 4000);
+    </script>
+</body>
+</html>
